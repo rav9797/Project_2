@@ -1,4 +1,5 @@
 import constants
+import random
 
 NUMBER_OF_PLAYERS = len(constants.PLAYERS)
 teams = []
@@ -7,13 +8,25 @@ names = []
 guardians = []
 experience = []
 heights = []
+experienced = []
+inexperienced = []
 
-        
+
+def outline(word):
+    print("-" * len(word))
+    print(word)
+    print("-" * len(word))
+
+
+def import_teams(list_of_teams):
+    for i in constants.TEAMS:
+        teams.append(i)
+
+
 # Imports the player names and makes a list of them
 def player_names(list_of_players):
     for i in range(NUMBER_OF_PLAYERS):
         names.append(constants.PLAYERS[i]["name"])
-    return names
 
 
 # Makes a list of the player's guardians split into lists instead of strings
@@ -23,7 +36,6 @@ def player_guardians(list_of_players):
         guardians_unsplit.append(constants.PLAYERS[i]["guardians"])
     for string in guardians_unsplit:
         guardians.append(string.split(" and "))
-    return guardians
 
 
 # Makes a list of the player's experience in boolean values
@@ -36,7 +48,6 @@ def player_experience(list_of_players):
             experience.append(True)
         else:
             experience.append(False)
-    return experience
 
 
 # Makes a list of the player heights in ints
@@ -49,7 +60,6 @@ def player_height(list_of_players):
     for i in range(NUMBER_OF_PLAYERS):
         del heights[i][1]
         heights[i] = int(heights[i][0])
-    return heights
     
 
 # Makes the list players which is a list of dictionaries
@@ -61,13 +71,6 @@ def list_of_dicts(list1, list2, list3, list4):
                   "height": list4[i],
                   }
         players.append(player)
-    return players
-
-
-def import_teams(list_of_teams):
-    for i in constants.TEAMS:
-        teams.append(i)
-    return teams
         
 
 def import_and_clean_data():
@@ -79,10 +82,137 @@ def import_and_clean_data():
     list_of_dicts(names, guardians, experience, heights)
 
 
+def exp_inexp():
+    player_list = players.copy()
+    for player in player_list:
+        for key, value in player.items():
+            if key == "experience":
+                if value == True:
+                    experienced.append(player)
+                elif value == False:
+                    inexperienced.append(player)
+                    
+                    
+# Populates teams with equal number of experienced and inexperienced players
+def populate(team_name):
+    players_per_team = int(NUMBER_OF_PLAYERS / len(teams))
+    inexp_per_team = players_per_team / 2
+    while len(team_name) < inexp_per_team:
+        random_choice = random.randint(0, ((len(inexperienced) - 1)))
+        player = inexperienced.pop(random_choice)
+        team_name.append(player)
+    while len(team_name) < players_per_team:
+        random_choice = random.randint(0, ((len(experienced) - 1)))
+        player = experienced.pop(random_choice)
+        team_name.append(player)
+        
+
+def make_teams():
+    team1 = []
+    team2 = []
+    team3 = []
+    populate(team1)
+    populate(team2)
+    populate(team3)     
+    return team1, team2, team3
+
+def display_teams():
+    print()
+    print("1) ", teams[0])
+    print("2) ", teams[1])
+    print("3) ", teams[2])
 
 
+# Displays stats for a given team
+def team_stats(team):
+    team_players = []
+    experienced_players = []
+    inexperienced_players = []
+    team_heights = []
+    team_guardians = []
+    for player in team:
+        for key, value in player.items():
+            if key == "name":
+                team_players.append(value)
+            if key == "experience":
+                if value == True:
+                    experienced_players.append(value)
+                    exp = len(experienced_players)
+                else:
+                    inexperienced_players.append(value)
+                    inexp = len(inexperienced_players)
+            if key == "height":
+                team_heights.append(value)
+                avg_height = round((sum(team_heights) / len(team)), 2)
+            if key == "guardians":
+                team_guardians.append(value)
+                #Found this solution at https://stackoverflow.com/questions/716477/join-list-of-lists-in-python
+                guardians = sum(team_guardians, [])
+                    
+    print("\nThere are {} players on this team:".format(len(team)))
+    print("  ", ", ".join(player for player in team_players))
+    print(f"\nThere are {exp} experienced players and {inexp} inexperienced players on this team.")
+    print(f"\nThe average height is {avg_height} inches")
+    print("\nThe players guardians are: ")
+    print("  ", ", ".join(guardian for guardian in guardians))
 
+    
+
+
+def main_menu():
+    while True:
+        print()
+        outline("MENU")
+        print("Here are your choices:")
+        print("  1) Display Team Stats")
+        print("  2) Quit")
+        print()
+        main_choice = int(input("Please enter an option: "))
+        if main_choice == 2:
+            break
+        elif main_choice == 1:
+            display_teams()
+            team_choice = int(input("\nSelect a team: "))
+            print()
+            if team_choice == 1:
+                print(f"----{teams[0]} STATS----")
+                team_stats(team1)
+                print(f"\n----{teams[0]} STATS----")
+            elif team_choice == 2:
+                print(f"----{teams[1]} STATS----")
+                team_stats(team2)
+                print(f"\n----{teams[1]} STATS----")
+            elif team_choice == 3:
+                print(f"----{teams[2]} STATS----")
+                team_stats(team3)
+                print(f"\n----{teams[2]} STATS----")
+    print("\n---HAVE A GREAT DAY!---")
+        
+    
+
+    
 
 
 if __name__ == "__main__":
     import_and_clean_data()
+    exp_inexp()
+    team1, team2, team3 = make_teams()
+    print("BASKETBALL TEAM STATS TOOL")
+    main_menu()
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
