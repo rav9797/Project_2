@@ -60,7 +60,7 @@ def player_height(list_of_players):
     for i in range(NUMBER_OF_PLAYERS):
         del heights[i][1]
         heights[i] = int(heights[i][0])
-    
+
 
 # Makes the list players which is a list of dictionaries
 def list_of_dicts(list1, list2, list3, list4):
@@ -71,7 +71,7 @@ def list_of_dicts(list1, list2, list3, list4):
                   "height": list4[i],
                   }
         players.append(player)
-        
+
 
 def import_and_clean_data():
     import_teams(constants.TEAMS)
@@ -87,12 +87,12 @@ def exp_inexp():
     for player in player_list:
         for key, value in player.items():
             if key == "experience":
-                if value == True:
+                if value is True:
                     experienced.append(player)
-                elif value == False:
+                elif value is False:
                     inexperienced.append(player)
-                    
-                    
+
+
 # Populates teams with equal number of experienced and inexperienced players
 def populate(team_name):
     players_per_team = int(NUMBER_OF_PLAYERS / len(teams))
@@ -105,7 +105,7 @@ def populate(team_name):
         random_choice = random.randint(0, ((len(experienced) - 1)))
         player = experienced.pop(random_choice)
         team_name.append(player)
-        
+
 
 def make_teams():
     team1 = []
@@ -113,11 +113,11 @@ def make_teams():
     team3 = []
     populate(team1)
     populate(team2)
-    populate(team3)     
+    populate(team3)
     return team1, team2, team3
 
+
 def display_teams():
-    print()
     print("1) ", teams[0])
     print("2) ", teams[1])
     print("3) ", teams[2])
@@ -135,7 +135,7 @@ def team_stats(team):
             if key == "name":
                 team_players.append(value)
             if key == "experience":
-                if value == True:
+                if value is True:
                     experienced_players.append(value)
                     exp = len(experienced_players)
                 else:
@@ -146,17 +146,13 @@ def team_stats(team):
                 avg_height = round((sum(team_heights) / len(team)), 2)
             if key == "guardians":
                 team_guardians.append(value)
-                #Found this solution at https://stackoverflow.com/questions/716477/join-list-of-lists-in-python
                 guardians = sum(team_guardians, [])
-                    
     print("\nThere are {} players on this team:".format(len(team)))
     print("  ", ", ".join(player for player in team_players))
     print(f"\nThere are {exp} experienced players and {inexp} inexperienced players on this team.")
     print(f"\nThe average height is {avg_height} inches")
     print("\nThe players guardians are: ")
     print("  ", ", ".join(guardian for guardian in guardians))
-
-    
 
 
 def main_menu():
@@ -167,13 +163,29 @@ def main_menu():
         print("  1) Display Team Stats")
         print("  2) Quit")
         print()
-        main_choice = int(input("Please enter an option: "))
+        main_choice = input("Please enter an option: ")
+        try:
+            main_choice = int(main_choice)
+            if main_choice == 1 or main_choice == 2:
+                print()
+            else:
+                raise ValueError()
+        except ValueError:
+            print("\nPlease enter 1 or 2. Try again.")
+            continue
         if main_choice == 2:
             break
         elif main_choice == 1:
             display_teams()
-            team_choice = int(input("\nSelect a team: "))
-            print()
+            team_choice = input("\nSelect a team: ")
+            try:
+                team_choice = int(team_choice)
+                if team_choice == 1 or team_choice == 2 or team_choice == 3:
+                    print()
+                else:
+                    raise ValueError()
+            except ValueError:
+                print("\nPlease enter 1, 2, or 3. Try again.")
             if team_choice == 1:
                 print(f"----{teams[0]} STATS----")
                 team_stats(team1)
@@ -187,10 +199,6 @@ def main_menu():
                 team_stats(team3)
                 print(f"\n----{teams[2]} STATS----")
     print("\n---HAVE A GREAT DAY!---")
-        
-    
-
-    
 
 
 if __name__ == "__main__":
@@ -199,20 +207,3 @@ if __name__ == "__main__":
     team1, team2, team3 = make_teams()
     print("BASKETBALL TEAM STATS TOOL")
     main_menu()
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
